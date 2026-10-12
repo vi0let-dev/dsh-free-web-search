@@ -24,3 +24,12 @@ test/real/node_modules/@deepseek-ai/dsh-web/
 # Captured response bodies — real pages fetched from search engines during
 # development. They are other people's content and can embed session identifiers.
 *.html
+
+# The banner is committed as WebP (142 KB). The PNG master is 1.9 MB and is kept
+# locally only as the source for re-exporting — committing it would defeat the
+# point of converting.
+docs/banner.png
+
+# Temporary image-conversion scratch.
+.webp-try/
+.webp-*.py

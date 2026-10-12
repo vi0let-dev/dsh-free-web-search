@@ -1,6 +1,16 @@
+<div align="center">
+
+<img src="docs/banner.webp" alt="dsh-free-web-search — Free · Fast · Powerful Web Search" width="100%">
+
 # dsh-free-web-search
 
-给 **DeepSeek Harness** 加一个**不需要任何 API key** 的 Web 搜索提供方，附带**代理支持**与**延迟测试**。
+**给 DeepSeek Harness 加一个不需要任何 API key 的 Web 搜索提供方**，附带代理支持与延迟测试。
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](#与已装插件共存以及为什么必须手动切换)
+[![Tests: 242 passing](https://img.shields.io/badge/tests-242%20passing-brightgreen.svg)](#测试)
+
+</div>
 
 官方搜索走 DeepSeek 的 Anthropic 兼容接口，需要一个 `DEEPSEEK_API_KEY`（或账号登录态）。这个插件换一条路：向 `ctx.web` 搜索缝隙注册一个 `free-web` 提供方，由**公开的免费后端**来回答搜索。
 
@@ -137,17 +147,54 @@ $DSH_HOME/dsh-free-web-search/settings.json
 
 ## 安装
 
+### 方式一：从 GitHub 直接安装（推荐）
+
+本插件是**纯 JavaScript、零依赖、无需构建**，所以可以直接从 Git 仓库安装——不必等发布 npm 包。
+
+**在 DSH 界面里：**
+
+```
+设置 → 插件 → 添加插件
+```
+
+输入：
+
+```
+github:vi0let-dev/dsh-free-web-search
+```
+
+装完**重启 DSH**。
+
+**或者手动改配置**（效果相同）：
+
+```powershell
+cd $env:DSH_PROFILE_DIR
+pnpm add github:vi0let-dev/dsh-free-web-search
+```
+
+然后把 `dsh-free-web-search` 加进该目录 `package.json` 的 `dsh.profile.bundles` 数组，再重启 DSH。
+
+### 方式二：本地路径安装（开发用）
+
 ```powershell
 cd $env:DSH_PROFILE_DIR
 # package.json 的 dependencies 加一行：
-#   "dsh-free-web-search": "<插件所在路径>"
+#   "dsh-free-web-search": "file:<插件所在路径>"
 # dsh.profile.bundles 加一行：
 #   "dsh-free-web-search"
 pnpm install
 # 重启 DSH
 ```
 
-> ⚠️ 本插件默认是**兜底姿态**：只在「显式选中」或「当前没有别的可用搜索提供方」时接管。你原本的 DeepSeek 搜索若正常，它会安静待命。要强制用它：`DSH_WEB_SEARCH_PROVIDER=free-web`。
+> ⚠️ `file:` 依赖在 pnpm 里是**复制**而非软链。改完源码要重新 `pnpm install`（或手动复制到 `node_modules`）才会生效。
+
+### 装完必做一步：切换默认搜索服务
+
+**重启后进 `设置 → 免费搜索 → 默认搜索服务`，点「设为本插件搜索」。**
+
+这一步**不能省**。DeepSeek 官方的搜索提供方**即使没有 API key 也会自称「可用」**（它的 `available()` 里有两个恒为真的判断），所以缝隙永远优先选它、然后以 `no API key` 失败——本插件作为「兜底」永远轮不到。原因详见 [与已装插件共存](#与已装插件共存以及为什么必须手动切换)。
+
+切换**立即生效**，不需要再次重启。想换回去，点同一处的「恢复 DeepSeek 官方」。
 
 ## 配置项
 
@@ -179,9 +226,9 @@ pnpm install
 ## 测试
 
 ```powershell
-node test/smoke.mjs              # 离线单元测试，150 项，无需网络
+node test/smoke.mjs              # 离线单元测试，187 项，无需网络
 node test/proxy-e2e.mjs          # 代理端到端，13 项，起真实本地代理
-node test/client-render.mjs      # 设置页渲染，13 项，无需浏览器
+node test/client-render.mjs      # 设置页渲染与交互，26 项，无需浏览器
 node test/extract-real-seam.mjs  # 从你的 app.asar 抽出真实 ctx.web
 node test/real-seam.mjs          # 对真实缝隙的集成测试，16 项
 node test/live.mjs               # 联网体检（只报告不判定）
@@ -189,7 +236,7 @@ node test/live-new-backends.mjs  # 新后端 + 延迟测试的联网体检
 node test/live-proxy.mjs 127.0.0.1:7890   # 带代理的联网体检
 ```
 
-合计 **192 项**。
+合计 **242 项**。
 
 ### 实测：本地 HTTP/SOCKS5 混合端口代理（`127.0.0.1:<port>`）
 
@@ -337,11 +384,13 @@ dsh-free-web-search/
 │       ├── yandex.js            yandex.com/search + 验证码识别
 │       ├── duckduckgo.js        html + lite 双端点
 │       └── wikipedia.js         MediaWiki API
-└── test/
-    ├── smoke.mjs                离线单元测试（149 项）
-    ├── fixtures.js              测试夹具（含广告位、坏数据、Google 空壳页等真实样本）
+├── docs/
+│   └── banner.webp              README 顶部横幅（PNG 母版不入库，见 .gitignore）
+└── test/                        共 242 项
+    ├── smoke.mjs                离线单元测试（187 项）
+    ├── fixtures.js              测试夹具（合成样本，非真实抓取页面）
     ├── proxy-e2e.mjs            代理端到端（13 项，真实本地代理 + 自签 HTTPS 源站）
-    ├── client-render.mjs        设置页渲染（13 项）
+    ├── client-render.mjs        设置页渲染与交互（26 项）
     ├── react-shim.mjs           极简 React 兼容层（仅供渲染测试）
     ├── real-seam.mjs            对真实 ctx.web 的集成测试（16 项）
     ├── extract-real-seam.mjs    从 app.asar 抽出真实缝隙
