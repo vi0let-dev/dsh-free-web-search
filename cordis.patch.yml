@@ -1,0 +1,29 @@
+# dsh-free-web-search — bundle patch.
+#
+# 一行 insert 挂载 Host 半身（向 ctx.web 注册免费搜索提供方 + 设置页 API）。
+#
+# 关于这一行的四个约束：
+#
+#   1. `name` 必须是**裸包名**，与 package.json 的 name、index.js 的 name 完全一致。
+#      DSH 用这个名字把插件的 Host 半身和浏览器半身（client.js）绑定到同一行上；
+#      子路径行不会携带半身。本插件有设置页，因此这个对齐是必需的。
+#
+#   2. `id` 只在本 profile 的插件树里唯一即可，与包名无关。取 `free-web-search`
+#      是为了与已装插件（`session-trash`、`our-free-model`）保持同一种命名风格。
+#
+#   3. `config` 留空即全部使用内置默认值。要改配置就改这里 —— 不要改 cordis.yml，
+#      那个文件由 DSH 生成、会被覆盖。可用的字段见 README，常用的是：
+#
+#         config:
+#           proxy: 'http://127.0.0.1:7890'        # 全局代理，默认空（直连）
+#           proxyByBackend:                       # 按后端覆盖
+#             baidu: 'direct'                     # 百度直连更快
+#             google: 'socks5://127.0.0.1:1080'   # 谷歌走 SOCKS5
+#           backends: ['searxng', 'google', 'bing', 'baidu', 'yandex', 'duckduckgo', 'wikipedia']
+#
+#   4. 代理也可以完全不写在这里：环境变量 HTTPS_PROXY / HTTP_PROXY / ALL_PROXY
+#      会被自动读取（DSH_FREE_WEB_SEARCH_USE_ENV_PROXY=false 可关闭）。
+- insert:
+    - id: free-web-search
+      name: 'dsh-free-web-search'
+      config: {}

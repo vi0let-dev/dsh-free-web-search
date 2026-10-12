@@ -1,0 +1,26 @@
+# The real ctx.web seam is extracted from the user's own DeepSeek Harness
+# installation by test/extract-real-seam.mjs. It is DeepSeek Harness source, not
+# this plugin's, so it is never committed — only the extraction script is.
+test/real/node_modules/@deepseek-ai/dsh-web/
+
+# ── Local scratch ──────────────────────────────────────────────────────────────
+# Ad-hoc probes, diagnostics and verification helpers used while developing. They
+# are not part of the plugin, and they routinely contain machine-specific paths and
+# captured pages from real requests — neither of which belongs in the repo.
+.diag/
+.diag-*.mjs
+.dbg-*.mjs
+.dbg-*.py
+.verify-*.mjs
+.probe*.mjs
+.recon*
+.tmp-verify/
+.icon-preview.*
+.install-backup/
+.redact*.cjs
+.isolate*.cjs
+.splice.cjs
+
+# Captured response bodies — real pages fetched from search engines during
+# development. They are other people's content and can embed session identifiers.
+*.html

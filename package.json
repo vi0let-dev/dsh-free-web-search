@@ -1,0 +1,55 @@
+{
+  "name": "dsh-free-web-search",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "免密钥的第三方 Web 搜索提供方：向 DeepSeek Harness 的 ctx.web 搜索缝隙注册一个免费搜索后端（SearxNG / DuckDuckGo / Wikipedia），无需任何 API key，并默认以「兜底」姿态与已装搜索提供方共存。",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/smoke.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "web-search",
+    "searxng",
+    "google",
+    "bing",
+    "baidu",
+    "yandex",
+    "duckduckgo",
+    "wikipedia",
+    "proxy",
+    "socks5",
+    "free",
+    "no-api-key"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  },
+  "license": "MIT"
+}
